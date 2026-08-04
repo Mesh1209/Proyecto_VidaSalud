@@ -1,0 +1,10 @@
+# Carpetas generadas por NetBeans (No se deben subir)
+/build/
+/dist/
+
+# Configuraciones personales de tu NetBeans local (Rutas de tu PC, pestañas abiertas)
+/nbproject/private/
+
+# Archivos sueltos del sistema operativo
+Thumbs.db
+.DS_Store

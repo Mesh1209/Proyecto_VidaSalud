@@ -1,0 +1,287 @@
+package Formularios;
+
+import Controler.ControladorCita;
+import Model.Cita;
+import Model.SesionUsuario;
+import javax.swing.table.DefaultTableModel;
+import PDF.BotonPdfEditorRender;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+/**
+ *
+ * @author Lenovo
+ */
+public class FrmHistorial_Paciente extends javax.swing.JFrame {
+
+    private DefaultTableModel modelo;
+    ControladorCita controlador = new ControladorCita(); 
+    public FrmHistorial_Paciente() {
+        initComponents();
+        
+        //ESTILO MODO OSCURO/CLARO
+        boolean temaActual = SesionUsuario.getInstancia().isModoTema();
+        //Estilos.TemaManager.alternarTema(this);
+        
+        IniciarModeloTabla();
+        DiseñoTabla();
+        List<Cita> todasCitas = controlador.listarCita();
+        cargarDatosTabla(todasCitas);
+    }
+    
+    private void IniciarModeloTabla() {
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Permitimos edición SOLO en la columna 5 (donde estará nuestro botón)
+                // Si no hacemos esto, el botón no recibirá los clics.
+                return column == 5; 
+            }
+        };
+        modelo.addColumn("idPaciente");
+        modelo.addColumn("idMedico");
+        modelo.addColumn("idCita");
+        modelo.addColumn("nombre");       
+        modelo.addColumn("numero_documento");
+        modelo.addColumn("Acciones"); // <-- Agregamos la columna para el botón (Índice 5)
+
+        TablaCita.setModel(modelo);
+
+        // ---- AQUÍ CONFIGURAMOS EL BOTÓN EN LA TABLA ----
+        BotonPdfEditorRender botonPDF = new BotonPdfEditorRender(TablaCita);
+        TablaCita.getColumnModel().getColumn(5).setCellRenderer(botonPDF);
+        TablaCita.getColumnModel().getColumn(5).setCellEditor(botonPDF);
+
+        // Le damos una mejor altura a las filas para que el botón no se vea aplastado
+        TablaCita.setRowHeight(28); 
+    }
+    
+    private void cargarDatosTabla(List<Cita> listarCitas) {
+        // 1. Limpiamos la tabla siempre al inicio
+        modelo.setRowCount(0);
+
+        // 2. Verificar si la lista que llegó está vacía o es nula
+        if (listarCitas == null || listarCitas.isEmpty()) {
+            System.out.println("No hay medicamentos para mostrar con los criterios actuales");
+            return;
+        }
+
+        for (Cita cita : listarCitas) {
+            Object[] fila = new Object[6]; // 6 columnas en total
+
+            // Extraemos los datos respetando el orden de tus columnas:
+            fila[0] = cita.getPaciente().getId_paciente();
+            fila[1] = cita.getMedico().getId_medico();
+            fila[2] = cita.getId_cita();
+            fila[3] = cita.getPaciente().getNombre();
+            fila[4] = cita.getPaciente().getNumero_documento();
+
+            // ¡Importante! Para la columna 5, pasamos un texto o el objeto cita.
+            // Tu renderizador 'BotonPdfEditorRender' usará este valor o simplemente pintará el botón encima.
+            fila[5] = "Generar PDF"; 
+
+            // 3. Agregamos la fila al modelo de la tabla
+            modelo.addRow(fila);
+        }
+    }
+    
+    private void DiseñoTabla(){
+        TablaCita.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+
+        // 2. Personalizamos el Renderizador del Header para forzar el color de fondo
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, 
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                JLabel headerLabel = (JLabel) super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+
+                headerLabel.setBackground(new Color(33, 150, 243)); // Azul Material
+                headerLabel.setForeground(Color.WHITE);
+                headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+                headerLabel.setHorizontalAlignment(JLabel.CENTER);
+                headerLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 1, new Color(25, 118, 210)));
+                headerLabel.setOpaque(true);
+
+                return headerLabel;
+            }
+        };
+
+        // 3. Aplicamos el nuevo renderizador a todas las columnas
+        for (int i = 0; i < TablaCita.getColumnModel().getColumnCount(); i++) {
+            TablaCita.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+        }
+    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane2 = new javax.swing.JScrollPane();
+        TablaCita = new javax.swing.JTable();
+        txtIdCita = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        cboEstado = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        DTPInicio = new com.github.lgooddatepicker.components.DateTimePicker();
+        DTPFin = new com.github.lgooddatepicker.components.DateTimePicker();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        TablaCita.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        TablaCita.setSelectionBackground(new java.awt.Color(0, 204, 0));
+        jScrollPane2.setViewportView(TablaCita);
+
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 780, 410));
+        getContentPane().add(txtIdCita, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 30, 80, -1));
+
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel1.setText("ID CITA");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
+        getContentPane().add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 140, -1));
+
+        jLabel2.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel2.setText("Nombre");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel3.setText("Estado");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 34, -1, 10));
+
+        cboEstado.setBackground(new java.awt.Color(51, 204, 255));
+        cboEstado.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        cboEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pendiente", "En curso", "Finalizado" }));
+        cboEstado.setBorder(null);
+        cboEstado.setFocusable(false);
+        getContentPane().add(cboEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 30, -1, -1));
+
+        jLabel4.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel4.setText("Fecha Inicio");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, -1, -1));
+
+        jLabel5.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel5.setText("Fecha Fin");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 70, -1, -1));
+        getContentPane().add(DTPInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 30, -1, -1));
+        getContentPane().add(DTPFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, -1, -1));
+
+        jPanel1.setBackground(new java.awt.Color(0, 153, 204));
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("BUSCAR");
+        jLabel7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel7.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel7MouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel7MousePressed(evt);
+            }
+        });
+        jPanel1.add(jLabel7, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 70, 120, 30));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jLabel7MousePressed
+
+    private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
+        // TODO add your handling code here:
+        Integer idCita = txtIdCita.getText().isEmpty() ? null : Integer.parseInt(txtIdCita.getText());
+        String nombre = txtNombre.getText().trim().isEmpty() ? null : txtNombre.getText().trim();
+        LocalDateTime fechaHoraInicio = DTPInicio.getDateTimeStrict();
+        LocalDateTime fechaHoraFin = DTPFin.getDateTimeStrict();
+        String estado = cboEstado.getSelectedIndex() == 0 ? null : cboEstado.getSelectedItem().toString();
+        
+        List<Cita> todasCitas = controlador.listarCitaFiltro(idCita, nombre, estado, fechaHoraInicio, fechaHoraFin);
+        cargarDatosTabla(todasCitas);
+    }//GEN-LAST:event_jLabel7MouseClicked
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(FrmHistorial_Paciente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(FrmHistorial_Paciente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(FrmHistorial_Paciente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(FrmHistorial_Paciente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new FrmHistorial_Paciente().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.github.lgooddatepicker.components.DateTimePicker DTPFin;
+    private com.github.lgooddatepicker.components.DateTimePicker DTPInicio;
+    private javax.swing.JTable TablaCita;
+    private javax.swing.JComboBox<String> cboEstado;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField txtIdCita;
+    private javax.swing.JTextField txtNombre;
+    // End of variables declaration//GEN-END:variables
+}
